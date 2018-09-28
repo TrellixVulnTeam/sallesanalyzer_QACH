@@ -15,3 +15,5 @@ for num, line in enumerate(teste2):
         dados = Data(line)
     else:
         dados.setRegister(line)
+
+pass

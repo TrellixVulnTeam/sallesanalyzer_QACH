@@ -41,6 +41,7 @@ class Data:
             colsData.setdefault(num + 1, colData)
         return colsData
 
+
     def __checkColNum(self, registerRaw):
         """
         Validação para o número de colunas antes de adicionar o registro
@@ -70,10 +71,8 @@ class Data:
             if data['colCod'] == cod:
                 return numCol
 
+
 class Register:
-    """
-    /**/
-    """
 
     def __init__(self, registerRaw):
         self.id = int(registerRaw[0])
@@ -94,4 +93,26 @@ class Register:
         ))
 
     def teste(self):
+        pass
+
+class DataExtractor(Data):
+
+    ALL    = 0
+    STORE  = 1
+    REGION = 2
+    DATE   = 3
+    TOTAL_SALES_VALUE = 10
+    TOTAL_SOLD_ITEMS  = 20
+    PRODUCT           = 30
+
+
+    def mostSoldProduct(self, by=ALL):
+        """
+        Retornar dicionario com os dados do 'vencedor'
+        :param by: Int - Critério de divisão
+        :return: Dict - Dicionário com o 'vencedor'
+        """
+        pass
+
+    def averege(self, of=PRODUCT, by=ALL):
         pass
