@@ -1,5 +1,5 @@
 import csv, os
-from classes import Data
+from classes import DataExtractor
 
 # Forma de abrir arquivo nativo do Python
 teste = open('data.csv')
@@ -12,7 +12,7 @@ dados = None
 for num, line in enumerate(teste2):
     print(', '.join(line))
     if num == 0:
-        dados = Data(line)
+        dados = DataExtractor(line)
     else:
         dados.setRegister(line)
 

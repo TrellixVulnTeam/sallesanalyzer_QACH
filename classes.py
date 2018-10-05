@@ -77,7 +77,7 @@ class Register:
     def __init__(self, registerRaw):
         self.id = int(registerRaw[0])
         self.storeNo = int(registerRaw[1])
-        self.selesRegion = str(registerRaw[2])
+        self.salesRegion = str(registerRaw[2])
         self.itemNo = int(registerRaw[3])
         self.itemDescription = str(registerRaw[4])
         self.unitPrice = float(registerRaw[5].replace('$','').replace(',','.'))
@@ -106,13 +106,57 @@ class DataExtractor(Data):
     PRODUCT           = 30
 
 
+    def sSortRegisters(self, by=STORE):
+        if(by==self.STORE):
+            biggerPos = self.registerList[0].storeNo
+            for i, register in enumerate(self.registerList):
+                if(register.storeNo):
+                    pass
+
+    def __funfe(self, by):
+        mostSold = {}
+        for register in self.registerList:
+            mostSold.setdefault(register.__getattribute__(by), {})
+            if (mostSold[register.__getattribute__(by)].setdefault(register.itemDescription,
+                                                      register.unitsSold) != register.unitsSold):
+                mostSold[register.__getattribute__(by)][register.itemDescription] += register.unitsSold
+        for store, value in mostSold.items():
+            auxP = ''
+            auxV = ''
+            for product, units in value.items():
+                if (not auxP):
+                    auxP = product
+                    auxV = units
+                if (units > value[auxP]):
+                    auxP = product
+                    auxV = units
+            mostSold[store] = {auxP: auxV}
+        return mostSold
+
     def mostSoldProduct(self, by=ALL):
         """
         Retornar dicionario com os dados do 'vencedor'
         :param by: Int - Critério de divisão
         :return: Dict - Dicionário com o 'vencedor'
         """
-        pass
+        if(by==self.ALL):
+            mostSold = {}
+            for register in self.registerList:
+                if (mostSold.setdefault(register.itemDescription, register.unitsSold) != register.unitsSold):
+                    mostSold[register.itemDescription] += register.unitsSold
+            pass
+            return mostSold
+        elif(by==self.STORE):
+            return self.__funfe('storeNo')
+        elif(by==self.REGION):
+            return self.__funfe('salesRegion')
+        elif(by==self.DATE):
+            return self.__funfe('weekEnding')
+        else: raise Exception
 
     def averege(self, of=PRODUCT, by=ALL):
         pass
+
+# Maior em quantidade
+# Maior em valor
+# LUCRO
