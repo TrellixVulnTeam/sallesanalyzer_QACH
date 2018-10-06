@@ -1,3 +1,4 @@
+import csv
 from datetime import date
 # Esse dicionário auxilia na passagem das abreviações
 # de meses para a representação em numeral
@@ -21,9 +22,20 @@ class Data:
     /**/
     """
     def __init__(self, headerList):
+        self.__productsCost = self.__getProductsCost()
         self.headerRaw = headerList
         self.colsData = self.__handleHeader()
         self.registerList = []
+
+    def __getProductsCost(self):
+        prodCost = {}
+        with open('prodTable.csv') as prodTableCSV:
+            prodCostList = csv.reader(prodTableCSV, delimiter=';', quotechar='"')
+            for line, value in enumerate(prodCostList, 1):
+                if(line!=1):
+                    product, cost = value
+                    prodCost.setdefault(product, cost)
+        return prodCost
 
     def __handleHeader(self):
         colsData = {}
@@ -51,7 +63,7 @@ class Data:
 
     def setRegister(self, registerRaw):
         if self.__checkColNum(registerRaw):
-            self.registerList.append(Register(registerRaw))
+            self.registerList.append(Register(registerRaw, self.__productsCost))
         else:
             # tratar erro aqui
             pass
@@ -74,13 +86,14 @@ class Data:
 
 class Register:
 
-    def __init__(self, registerRaw):
+    def __init__(self, registerRaw, unitCost):
         self.id = int(registerRaw[0])
         self.storeNo = int(registerRaw[1])
         self.salesRegion = str(registerRaw[2])
         self.itemNo = int(registerRaw[3])
         self.itemDescription = str(registerRaw[4])
         self.unitPrice = float(registerRaw[5].replace('$','').replace(',','.'))
+        self.unitCost = float(unitCost[self.itemDescription])
         self.unitsSold = int(registerRaw[6])
         self.weekEnding = self.__handleDate(registerRaw[7])
 
@@ -133,6 +146,19 @@ class DataExtractor(Data):
             mostSold[store] = {auxP: auxV}
         return mostSold
 
+    def __blz(self):
+        pass
+
+    def __unitsSold(self, product, by=ALL):
+        if(by==self.ALL):
+            pass
+        elif(by==self.REGION):
+            pass
+        elif(by==self.STORE):
+            pass
+        elif(by==self.DATE):
+            pass
+
     def mostSoldProduct(self, by=ALL):
         """
         Retornar dicionario com os dados do 'vencedor'
@@ -154,8 +180,16 @@ class DataExtractor(Data):
             return self.__funfe('weekEnding')
         else: raise Exception
 
-    def averege(self, of=PRODUCT, by=ALL):
-        pass
+    def profit(self, by=PRODUCT):
+        if(by==self.PRODUCT):
+            productProfit = {}
+            for register in self.registerList:
+                productProfit.setdefault(register.itemDescription, {'unitPrice': register.unitPrice, 'unitsSold': 0})
+                productProfit[register.itemDescription]['unitsSold'] += register.unitsSold
+        elif(by==self.REGION):
+            pass
+
+pass
 
 # Maior em quantidade
 # Maior em valor
