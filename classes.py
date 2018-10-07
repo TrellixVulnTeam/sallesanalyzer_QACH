@@ -175,7 +175,7 @@ class DataExtractor(Data):
         dic[rg.itemDescription]['totalProfit'] = unitProfitValue * dic[rg.itemDescription]['unitsSold']
         return dic
 
-    def __findProfits(self, by):
+    def __findProfits(self, by, split=False):
         productProfit = {}
         of = 'itemDescription'
         if by == of:
@@ -188,19 +188,35 @@ class DataExtractor(Data):
                     productProfit[register.__getattribute__(by)], register)
             for k, v in productProfit.items():
                 model = {'totalProfit': 0, 'unitsSold': 0}
-                for product, data in v.items():
-                    model['totalProfit'] += data['totalProfit']
-                    model['unitsSold'] += data['unitsSold']
-                productProfit[k] = model
+                if not split:
+                    for product, data in v.items():
+                        model['totalProfit'] += data['totalProfit']
+                        model['unitsSold'] += data['unitsSold']
+                    productProfit[k] = model
         return productProfit
 
-    def profit(self, by=PRODUCT):
+    def profit(self, by=PRODUCT, split=False):
         if(by==self.PRODUCT):
             return self.__findProfits('itemDescription')
         elif(by==self.REGION):
-            return self.__findProfits('salesRegion')
+            return self.__findProfits('salesRegion', split=split)
 
-pass
+    def __findMoreProfitable(self, by):
+        pass
+
+    def moreProfitable(self, data):
+        theMost = {}
+        for k, v in data.items():
+            if not theMost: theMost = {k}
+            else:
+                for key in theMost:
+                    if data[k]['totalProfit'] > data[key]['totalProfit']:
+                        theMost = {k}
+                        break
+                    elif data[k]['totalProfit'] == data[key]['totalProfit']:
+                        theMost.add(k)
+                        break
+        return theMost
 
 # Maior em quantidade
 # Maior em valor
