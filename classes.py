@@ -126,7 +126,7 @@ class DataExtractor(Data):
                 if(register.storeNo):
                     pass
 
-    def __funfe(self, by):
+    def __findMostSold(self, by):
         mostSold = {}
         for register in self.registerList:
             mostSold.setdefault(register.__getattribute__(by), {})
@@ -146,19 +146,6 @@ class DataExtractor(Data):
             mostSold[store] = {auxP: auxV}
         return mostSold
 
-    def __blz(self):
-        pass
-
-    def __unitsSold(self, product, by=ALL):
-        if(by==self.ALL):
-            pass
-        elif(by==self.REGION):
-            pass
-        elif(by==self.STORE):
-            pass
-        elif(by==self.DATE):
-            pass
-
     def mostSoldProduct(self, by=ALL):
         """
         Retornar dicionario com os dados do 'vencedor'
@@ -173,21 +160,45 @@ class DataExtractor(Data):
             pass
             return mostSold
         elif(by==self.STORE):
-            return self.__funfe('storeNo')
+            return self.__findMostSold('storeNo')
         elif(by==self.REGION):
-            return self.__funfe('salesRegion')
+            return self.__findMostSold('salesRegion')
         elif(by==self.DATE):
-            return self.__funfe('weekEnding')
+            return self.__findMostSold('weekEnding')
         else: raise Exception
+
+    def __findProfitsLowLevel(self, dic, rg):
+        model = {'totalProfit': 0, 'unitsSold': 0}
+        dic.setdefault(rg.itemDescription, model)
+        unitProfitValue = rg.unitPrice - rg.unitCost
+        dic[rg.itemDescription]['unitsSold'] += rg.unitsSold
+        dic[rg.itemDescription]['totalProfit'] = unitProfitValue * dic[rg.itemDescription]['unitsSold']
+        return dic
+
+    def __findProfits(self, by):
+        productProfit = {}
+        of = 'itemDescription'
+        if by == of:
+            for register in self.registerList:
+                productProfit = self.__findProfitsLowLevel(productProfit, register)
+        else:
+            for register in self.registerList:
+                if by != of: productProfit.setdefault(register.__getattribute__(by), {})
+                productProfit[register.__getattribute__(by)] = self.__findProfitsLowLevel(
+                    productProfit[register.__getattribute__(by)], register)
+            for k, v in productProfit.items():
+                model = {'totalProfit': 0, 'unitsSold': 0}
+                for product, data in v.items():
+                    model['totalProfit'] += data['totalProfit']
+                    model['unitsSold'] += data['unitsSold']
+                productProfit[k] = model
+        return productProfit
 
     def profit(self, by=PRODUCT):
         if(by==self.PRODUCT):
-            productProfit = {}
-            for register in self.registerList:
-                productProfit.setdefault(register.itemDescription, {'unitPrice': register.unitPrice, 'unitsSold': 0})
-                productProfit[register.itemDescription]['unitsSold'] += register.unitsSold
+            return self.__findProfits('itemDescription')
         elif(by==self.REGION):
-            pass
+            return self.__findProfits('salesRegion')
 
 pass
 
