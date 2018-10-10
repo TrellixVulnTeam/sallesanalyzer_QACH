@@ -1,9 +1,10 @@
 import csv, os
 from classes import DataExtractor
 
-def main():
+def main(arqPath):
+    print(arqPath)
     # Forma de abrir arquivo nativo do Python
-    teste = open('data.csv')
+    teste = open(arqPath)
 
     # Utilizando módulo CSV para interpretar facilmente o arquivo CSV
     teste2 = csv.reader(teste, delimiter=';', quotechar='"')
@@ -16,6 +17,4 @@ def main():
             dados = DataExtractor(line)
         else:
             dados.setRegister(line)
-    return dados
-
-main()
+    #return dados
