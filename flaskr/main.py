@@ -12,9 +12,9 @@ def main(arqPath):
     dados = None
     # Imprimindo leitura do módulo CSV
     for num, line in enumerate(teste2):
-        print(', '.join(line))
+        #print(', '.join(line))
         if num == 0:
             dados = DataExtractor(line)
         else:
             dados.setRegister(line)
-    #return dados
+    return dados

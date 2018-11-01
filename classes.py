@@ -196,6 +196,13 @@ class DataExtractor(Data):
         return productProfit
 
     def profit(self, by=PRODUCT, split=False):
+        """
+        Retorna o lucro por produto ou por região. O split separa o lucro por produto em cada região
+
+        :param by: int - Escolher mostrar o lucro por PRODUTO ou por REGIÃO
+        :param split: boolean - Se True, separa o lucro por produto na opção por REGIÃO
+        :return: Dict - Dicionário com o resultado
+        """
         if(by==self.PRODUCT):
             return self.__findProfits('itemDescription')
         elif(by==self.REGION):
@@ -204,7 +211,7 @@ class DataExtractor(Data):
     def __findMoreProfitable(self, by):
         pass
 
-    def moreProfitable(self, data):
+    def mostProfitable(self, data):
         theMost = {}
         for k, v in data.items():
             if not theMost: theMost = {k}
