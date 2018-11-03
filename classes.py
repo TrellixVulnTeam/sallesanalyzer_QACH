@@ -1,4 +1,4 @@
-import csv
+import csv,os
 from datetime import date
 # Esse dicionário auxilia na passagem das abreviações
 # de meses para a representação em numeral
@@ -21,15 +21,15 @@ class Data:
     """
     /**/
     """
-    def __init__(self, headerList):
-        self.__productsCost = self.__getProductsCost()
+    def __init__(self, headerList, prodCostFile):
+        self.__productsCost = self.__getProductsCost(prodCostFile)
         self.headerRaw = headerList
         self.colsData = self.__handleHeader()
         self.registerList = []
 
-    def __getProductsCost(self):
+    def __getProductsCost(self, prodCostFile):
         prodCost = {}
-        with open('prodTable.csv') as prodTableCSV:
+        with (open(os.path.join(os.getcwd(),'prodTable.csv')) if not prodCostFile else prodCostFile) as prodTableCSV:
             prodCostList = csv.reader(prodTableCSV, delimiter=';', quotechar='"')
             for line, value in enumerate(prodCostList, 1):
                 if(line!=1):
